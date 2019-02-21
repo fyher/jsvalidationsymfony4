@@ -1,6 +1,9 @@
 # jsvalidationsymfony4
 Js validation symfony 4 
 
+On focus out on the input , check is the value valid the form constraints for all input, select, textarea for the form
+
+
 use axios 
 
 Example form:
