@@ -6,6 +6,7 @@ On focus out on the input , check is the value valid the form constraints for al
 
 use axios 
 
+form_extension_js_checker(form,formType,idForm,Entity)
 Example form:
 
 
