@@ -1,0 +1,87 @@
+<script>
+    var nameentity="{{ entity }}";
+    var formtype="{{ formtype }}";
+    document.addEventListener('readystatechange', function(){
+        if (document.readyState == 'complete') {
+            console.log("lance script");
+            var elementform=document.getElementById("{{ id }}").elements;
+
+
+            if(!elementform){
+                console.log("no element");
+            }else{
+                for (var i = 0; i < elementform.length; i++) {
+
+                    if(elementform[i].nodeName!="BUTTON"){
+                        if(elementform[i].value){
+                            checkinput(elementform[i]);
+                        }
+
+                        elementform[i].addEventListener("change",function(e){
+                            checkinput(e.target);
+                        });
+                    }
+
+
+                }
+            }
+        }
+
+    });
+
+    function checkinput(e){
+        var fieldinput=e.dataset.field;
+        var valueinput=e.value;
+        var parentgroupe=e.parentNode;
+
+        if (parentgroupe.hasChildNodes()) {
+            var listenoeudparent=parentgroupe.childNodes;
+            for (var i = 0; i < listenoeudparent.length; i++) {
+
+                if(listenoeudparent[i].classList.contains("invalid-feedback")){
+                    var content=listenoeudparent[i];
+                }
+            }
+
+        }
+
+        if(!content){
+            var content=document.createElement("div");
+            content.classList.add("invalid-feedback");
+            parentgroupe.appendChild(content);
+        }
+        //var zoneerror=parentgroupe.getElementsByClassName("invalid-feedback");
+        axios.post("{{ url("valid_entity") }}",{
+            params: {
+                field: fieldinput,
+                value: valueinput,
+                entity: nameentity,
+                type: formtype
+
+            },
+            reponseType: 'json'
+        })
+            .then(function(response){
+                console.log(response);
+                //is-valid
+                if(e.classList.contains("is-invalid")){
+                    e.classList.remove("is-invalid");
+                    content.remove();
+                }
+                e.classList.add("is-valid");
+            })
+            .catch(function(error){
+
+                if(e.classList.contains("is-valid")){
+                    e.classList.remove("is-valid")
+                }
+                e.classList.add("is-invalid");
+                // e.target.after(content.outerHTML);
+
+                //alert(JSON.stringify(error.response.data));
+                content.innerHTML=error.response.data.retour;
+
+                console.log(error.response.data.retour)
+            })
+    }
+</script>
